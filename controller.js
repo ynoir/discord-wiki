@@ -57,6 +57,9 @@ export class Controller {
     deleteWikiEntry() {
         this.model.wikiEntries.splice(this.model.wikiEntryEditIndex, 1)
         this.model.wikiEntryEditIndex = undefined
+        if (this.model.wikiEntries.length == 1) {
+            this.model.wikiEntryEditIndex = 0
+        }
         this.storeModel()
         this.topPanel.render()
         this.wikiEntryPanel.render()
