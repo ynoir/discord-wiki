@@ -102,6 +102,7 @@ export const select = (options) => {
 
 export const textarea = (options) => {
     const textarea = document.createElement('textarea')
+    textarea.rows = '8'
     textarea.value = options.value
     textarea.onchange = (event) => options.onchange(event.target.value)
     return textarea
