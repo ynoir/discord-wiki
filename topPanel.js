@@ -1,6 +1,5 @@
 import { inputField, select } from './components.js'
 
-// TODO add thumbnail image url
 export class TopPanel {
 
     constructor(controller, model, container) {
@@ -15,6 +14,7 @@ export class TopPanel {
         const webhookField = inputField({
             label: 'Webhook',
             value: this.model.webhook,
+            password: true,
             onchange: (webhook) => {
                 this.controller.setWebhook(webhook)
             },

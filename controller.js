@@ -84,8 +84,6 @@ export class Controller {
         this.storeModel()
     }
 
-    // TODO ensure order
-    // TODO zurueck zum Inhaltsverzeichnis
     sync() {
         this.ensureIndex().then(() => {
             this.syncWikiEnties().then(() => {

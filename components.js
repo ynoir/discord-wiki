@@ -8,7 +8,11 @@ export const inputField = (options) => {
 
     const input = document.createElement('input')
     input.classList.add('input-group-field')
-    input.type = 'text'
+    if (options.password) {
+        input.type = 'password'
+    } else {
+        input.type = 'text'
+    }
     input.value = options.value
     input.onchange = (event) => options.onchange(event.target.value)
     inputGroup.appendChild(input)
@@ -77,5 +81,3 @@ export const textarea = (options) => {
     textarea.onchange = (event) => options.onchange(event.target.value)
     return textarea
 }
-
-// https://media.discordapp.net/attachments/827576937459089449/836172578820980746/00_Dark_Souls_III.jpg
