@@ -117,12 +117,24 @@ export class Controller {
     }
 
     syncWikiEnties() {
-        let promise = this.syncWikiEntry(this.model.wikiEntries[0])
-        for (var i = 1; i < this.model.wikiEntries.length; i++) {
+        const tasks = []
+        for (let i = 0; i < this.model.wikiEntries.length; i++) {
             const wikiEntry = this.model.wikiEntries[i]
-            promise = promise.then(() => this.syncWikiEntry(wikiEntry));
+            tasks.push(new Promise((resolve) => {
+                setTimeout(() => {
+                    this.syncWikiEntry(wikiEntry)
+                    resolve()
+                }, 500 * i)
+            }))
         }
-        return promise
+
+        return tasks.reduce((promiseChain, currentTask) => {
+            return promiseChain.then(chainResults =>
+                currentTask.then(currentResult =>
+                    [ ...chainResults, currentResult ]
+                )
+            )
+        }, Promise.resolve([])).then(() => {})
     }
 
     syncWikiEntry(wikiEntry) {
@@ -181,7 +193,7 @@ export class Controller {
 
     updateIndex() {
         const links = this.model.wikiEntries.map((wikiEntry) => {
-            const messageLink = 'https://discord.com/channels/' + this.model.serverId + '/' + wikiEntry.channelId + '/' + wikiEntry.messageId
+            const messageLink = 'https://discord.com/channels/' + this.model.serverId + '/' + this.model.channelId + '/' + wikiEntry.messageId
             return '[' + wikiEntry.title + '](' + messageLink + ')'
         });
         const description = links.join('\n')
@@ -198,5 +210,4 @@ export class Controller {
         return this.discordService.patch(this.model.webhook, this.model.wikiIndexMessageId, hookData).then((response) => {
         })
     }
-
 }
