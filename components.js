@@ -40,6 +40,31 @@ export const button = (options) => {
     return button
 }
 
+export const importExportButtons = (options) => {
+    const div = document.createElement('div')
+    div.classList.add('input-group')
+    const label = document.createElement('label')
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'application/json'
+    input.style.cssText = 'display: none'
+    const importButton = button({
+        label: options.importLabel,
+        action: () => {input.click()}
+    })
+    input.onchange = (value) => options.importAction(value)
+    const exportButton = button({
+        label: options.exportLabel,
+        action: options.exportAction
+    })
+    exportButton.style.cssText = 'margin-left: 10px'
+    label.appendChild(input)
+    div.appendChild(label)
+    div.appendChild(importButton)
+    div.appendChild(exportButton)
+    return div
+}
+
 export const select = (options) => {
     const span = document.createElement('span')
     span.classList.add('input-group-label')

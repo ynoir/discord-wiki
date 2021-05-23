@@ -3,6 +3,7 @@ export class Model {
     constructor() {
         this.webhook = ''
         this.serverId = ''
+        this.channelId = ''
         this.thumbnailUrl = ''
         this.wikiEntries = []
         this.wikiEntryEditIndex = undefined

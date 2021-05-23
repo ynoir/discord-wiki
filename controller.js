@@ -21,6 +21,27 @@ export class Controller {
         localStorage.setItem('discordWiki', JSON.stringify(this.model));
     }
 
+    import(event) {
+        var reader = new FileReader();
+        reader.onload = () => {
+            this.model = JSON.parse(reader.result)
+            this.topPanel.model = this.model
+            this.wikiEntryPanel.model = this.model
+            this.storeModel()
+            this.topPanel.render()
+            this.wikiEntryPanel.render()
+        }
+        reader.readAsText(event.target.files[0]);
+    }
+
+    export() {
+        const hiddenElement = document.createElement('a')
+        const modelString = JSON.stringify(this.model, null, 4)
+        hiddenElement.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(modelString)
+        hiddenElement.download = 'discordWiki.json'
+        hiddenElement.click()
+    }
+
     setWebhook(webhook) {
         this.model.webhook = webhook
         this.storeModel()
@@ -106,7 +127,7 @@ export class Controller {
 
     syncWikiEntry(wikiEntry) {
         if (wikiEntry.dirty) {
-            const indexLink = 'https://discord.com/channels/' + this.model.serverId + '/' + wikiEntry.channelId + '/' + this.model.wikiIndexMessageId
+            const indexLink = 'https://discord.com/channels/' + this.model.serverId + '/' + this.model.channelId + '/' + this.model.wikiIndexMessageId
             const hookData = {
                 embeds: [
                     {
@@ -129,7 +150,6 @@ export class Controller {
             } else {
                 return this.discordService.post(this.model.webhook, hookData).then((response) => {
                     wikiEntry.messageId = response.id
-                    wikiEntry.channelId = response.channel_id
                     wikiEntry.dirty = false
                     this.storeModel()
                 })
@@ -152,6 +172,7 @@ export class Controller {
             }
             return this.discordService.post(this.model.webhook, hookData).then((response) => {
                 this.model.wikiIndexMessageId = response.id
+                this.model.channelId = response.channel_id
                 this.storeModel()
             })
         }
