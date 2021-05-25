@@ -117,3 +117,15 @@ export const divider = () => {
     const hr = document.createElement('hr')
     return hr
 }
+
+export const showOverlay = (options) => {
+    const overlay = document.getElementById('overlay')
+    const overlayText = document.getElementById('overlay-text')
+    overlayText.innerText = options.text
+    overlay.style.display = 'initial'
+}
+
+export const hideOverlay = () => {
+    const overlay = document.getElementById('overlay')
+    overlay.style.display = 'none'
+}

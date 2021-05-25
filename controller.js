@@ -2,6 +2,7 @@ import { TopPanel } from './topPanel.js'
 import { WikiEntryPanel } from './wikiEntryPanel.js'
 import { DiscordService } from './discordService.js'
 import { Model } from './model.js'
+import { showOverlay, hideOverlay } from './components.js'
 
 export class Controller {
 
@@ -106,9 +107,14 @@ export class Controller {
     }
 
     sync() {
+        showOverlay({
+            text: 'Publishing...'
+        })
         this.ensureIndex().then(() => {
             this.syncWikiEnties().then(() => {
-                this.updateIndex()
+                this.updateIndex().then(() => {
+                    hideOverlay()
+                })
             })
         })
     }
@@ -217,7 +223,6 @@ export class Controller {
         const hookData = {
             embeds: embeds
         }
-        return this.discordService.patch(this.model.webhook, this.model.wikiIndexMessageId, hookData).then((response) => {
-        })
+        return this.discordService.patch(this.model.webhook, this.model.wikiIndexMessageId, hookData)
     }
 }
