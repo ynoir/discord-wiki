@@ -107,3 +107,8 @@ export const textarea = (options) => {
     textarea.onchange = (event) => options.onchange(event.target.value)
     return textarea
 }
+
+export const divider = () => {
+    const hr = document.createElement('hr')
+    return hr
+}

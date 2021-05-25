@@ -1,4 +1,4 @@
-import { inputField, select, importExportButtons } from './components.js'
+import { inputField, importExportButtons } from './components.js'
 
 export class TopPanel {
 
@@ -40,21 +40,6 @@ export class TopPanel {
             }
         })
 
-        const options = []
-        for (let i=0; i<this.model.wikiEntries.length; i++) {
-            options.push({
-                label: this.model.wikiEntries[i].title,
-                value: i,
-                selected: i == this.model.wikiEntryEditIndex
-            })
-        }
-        const wikiEntrySelect = select({
-            label: 'Wiki Entries',
-            options: options,
-            addNew: () => this.controller.newWikiEntry(),
-            select: (value) => this.controller.editWikiEntry(value)
-        })
-
         const importExport = importExportButtons({
             importLabel: 'Import',
             importAction: (value) => this.controller.import(value),
@@ -65,7 +50,6 @@ export class TopPanel {
         this.container.appendChild(webhookField)
         this.container.appendChild(serverIdField)
         this.container.appendChild(thumbnailUrlField)
-        this.container.appendChild(wikiEntrySelect)
         this.container.appendChild(importExport)
     }
 

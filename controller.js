@@ -17,7 +17,8 @@ export class Controller {
         this.wikiEntryPanel.render()
     }
 
-    storeModel() {
+    modelChanged() {
+        this.wikiEntryPanel.render()
         localStorage.setItem('discordWiki', JSON.stringify(this.model));
     }
 
@@ -27,9 +28,7 @@ export class Controller {
             this.model = JSON.parse(reader.result)
             this.topPanel.model = this.model
             this.wikiEntryPanel.model = this.model
-            this.storeModel()
-            this.topPanel.render()
-            this.wikiEntryPanel.render()
+            this.modelChanged()
         }
         reader.readAsText(event.target.files[0]);
     }
@@ -44,17 +43,20 @@ export class Controller {
 
     setWebhook(webhook) {
         this.model.webhook = webhook
-        this.storeModel()
+        this.modelChanged()
     }
 
     setServerId(serverId) {
         this.model.serverId = serverId
-        this.storeModel()
+        this.modelChanged()
     }
 
     setThumbnailUrl(thumbnailUrl) {
         this.model.thumbnailUrl = thumbnailUrl
-        this.storeModel()
+        this.model.wikiEntries.forEach((wikiEntry) => {
+            wikiEntry.dirty = true
+        })
+        this.modelChanged()
     }
 
     newWikiEntry() {
@@ -70,42 +72,37 @@ export class Controller {
 
     editWikiEntry(index) {
         this.model.wikiEntryEditIndex = index
-        this.topPanel.render()
-        this.wikiEntryPanel.render()
-        this.storeModel()
+        this.modelChanged()
     }
 
     deleteWikiEntry() {
         this.model.wikiEntries.splice(this.model.wikiEntryEditIndex, 1)
         this.model.wikiEntryEditIndex = undefined
-        if (this.model.wikiEntries.length == 1) {
+        if (this.model.wikiEntries.length > 0) {
             this.model.wikiEntryEditIndex = 0
         }
-        this.storeModel()
-        this.topPanel.render()
-        this.wikiEntryPanel.render()
+        this.modelChanged()
     }
 
     updateTitle(title) {
         const wikiEntry = this.model.wikiEntries[this.model.wikiEntryEditIndex]
         wikiEntry.title = title
         wikiEntry.dirty = true
-        this.topPanel.render()
-        this.storeModel()
+        this.modelChanged()
     }
 
     updateContent(content) {
         const wikiEntry = this.model.wikiEntries[this.model.wikiEntryEditIndex]
         wikiEntry.content = content
         wikiEntry.dirty = true
-        this.storeModel()
+        this.modelChanged()
     }
 
     updateImageUrl(imageUrl) {
         const wikiEntry = this.model.wikiEntries[this.model.wikiEntryEditIndex]
         wikiEntry.imageUrl = imageUrl
         wikiEntry.dirty = true
-        this.storeModel()
+        this.modelChanged()
     }
 
     sync() {
@@ -118,12 +115,12 @@ export class Controller {
 
     syncWikiEnties() {
         const tasks = []
-        for (let i = 0; i < this.model.wikiEntries.length; i++) {
-            const wikiEntry = this.model.wikiEntries[i]
+        const dirtyEntries = this.model.wikiEntries.filter((wikiEntry) => wikiEntry.dirty)
+        for (let i = 0; i < dirtyEntries.length; i++) {
+            const wikiEntry = dirtyEntries[i]
             tasks.push(new Promise((resolve) => {
                 setTimeout(() => {
-                    this.syncWikiEntry(wikiEntry)
-                    resolve()
+                    this.syncWikiEntry(wikiEntry).then(() => resolve())
                 }, 500 * i)
             }))
         }
@@ -157,13 +154,13 @@ export class Controller {
             if (wikiEntry.messageId) {
                 return this.discordService.patch(this.model.webhook, wikiEntry.messageId, hookData).then((response) => {
                     wikiEntry.dirty = false
-                    this.storeModel()
+                    this.modelChanged()
                 })
             } else {
                 return this.discordService.post(this.model.webhook, hookData).then((response) => {
                     wikiEntry.messageId = response.id
                     wikiEntry.dirty = false
-                    this.storeModel()
+                    this.modelChanged()
                 })
             }
         }
@@ -185,13 +182,14 @@ export class Controller {
             return this.discordService.post(this.model.webhook, hookData).then((response) => {
                 this.model.wikiIndexMessageId = response.id
                 this.model.channelId = response.channel_id
-                this.storeModel()
+                this.modelChanged()
             })
         }
         return Promise.resolve()
     }
 
     updateIndex() {
+        // TODO index size limit
         const links = this.model.wikiEntries.map((wikiEntry) => {
             const messageLink = 'https://discord.com/channels/' + this.model.serverId + '/' + this.model.channelId + '/' + wikiEntry.messageId
             return '[' + wikiEntry.title + '](' + messageLink + ')'

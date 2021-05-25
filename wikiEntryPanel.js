@@ -1,4 +1,4 @@
-import { inputField, button, textarea } from './components.js'
+import { inputField, button, textarea, select, divider } from './components.js'
 
 export class WikiEntryPanel {
 
@@ -11,9 +11,32 @@ export class WikiEntryPanel {
     render() {
         this.container.innerHTML = ''
 
+        const options = []
+        for (let i=0; i<this.model.wikiEntries.length; i++) {
+            let title = this.model.wikiEntries[i].title
+            if (this.model.wikiEntries[i].dirty) {
+                title += ' *'
+            }
+            options.push({
+                label: title,
+                value: i,
+                selected: i == this.model.wikiEntryEditIndex
+            })
+        }
+
+        const wikiEntrySelect = select({
+            label: 'Wiki Entries',
+            options: options,
+            addNew: () => this.controller.newWikiEntry(),
+            select: (value) => this.controller.editWikiEntry(value)
+        })
+        this.container.appendChild(wikiEntrySelect)
+
         if (this.model.wikiEntryEditIndex == undefined) {
             return
         }
+
+        const entryDivider = divider()
 
         const wikiEntry = this.model.wikiEntries[this.model.wikiEntryEditIndex]
 
@@ -40,11 +63,14 @@ export class WikiEntryPanel {
             }
         })
 
+        // TODO messae link readonly
+
         const deleteButton = button({
             label: 'Delete',
             action: () => this.controller.deleteWikiEntry()
         })
 
+        this.container.appendChild(entryDivider)
         this.container.appendChild(titleField)
         this.container.appendChild(contentField)
         this.container.appendChild(imageUrlField)
