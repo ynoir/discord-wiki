@@ -11,6 +11,14 @@ export class TopPanel {
     render() {
         this.container.innerHTML = ''
 
+        const wikiNameField = inputField({
+            label: 'Wiki Name',
+            value: this.model.wikiName,
+            onchange: (wikiName) => {
+                this.controller.setWikiName(wikiName)
+            }
+        })
+
         const webhookField = inputField({
             label: 'Webhook',
             value: this.model.webhook,
@@ -47,6 +55,7 @@ export class TopPanel {
             exportAction: () => this.controller.export()
         })
 
+        this.container.appendChild(wikiNameField)
         this.container.appendChild(webhookField)
         this.container.appendChild(serverIdField)
         this.container.appendChild(thumbnailUrlField)

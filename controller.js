@@ -21,6 +21,7 @@ export class Controller {
     }
 
     modelChanged() {
+        this.topPanel.render()
         this.wikiEntryPanel.render()
         localStorage.setItem('discordWiki', JSON.stringify(this.model));
     }
@@ -40,8 +41,13 @@ export class Controller {
         const hiddenElement = document.createElement('a')
         const modelString = JSON.stringify(this.model, null, 4)
         hiddenElement.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(modelString)
-        hiddenElement.download = 'discordWiki.json'
+        hiddenElement.download = this.model.wikiName.replaceAll(' ', '_') + '.json'
         hiddenElement.click()
+    }
+
+    setWikiName(wikiName) {
+        this.model.wikiName = wikiName
+        this.modelChanged()
     }
 
     setWebhook(webhook) {

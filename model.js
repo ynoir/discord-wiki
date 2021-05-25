@@ -1,6 +1,7 @@
 export class Model {
 
     constructor() {
+        this.wikiName = 'Wiki Of Peculiar Things'
         this.webhook = ''
         this.serverId = ''
         this.channelId = ''
