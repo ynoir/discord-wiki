@@ -28,8 +28,24 @@ export const inputField = (options) => {
         inputGroup.appendChild(inputGroupButton)
     }
 
+    if (options.copyButton) {
+        const inputGroupButton = document.createElement('div')
+        inputGroupButton.classList.add('input-group-button')
+        const inputButton = button({
+            label: 'Copy',
+            action: () => {
+                input.select()
+                input.setSelectionRange(0, 99999)
+                document.execCommand("copy")
+                input.blur()
+            }
+        })
+        inputGroupButton.appendChild(inputButton)
+        inputGroup.appendChild(inputGroupButton)
+    }
+
     if (options.disabled) {
-        input.disabled = true
+        input.readOnly = true
     }
 
     return inputGroup

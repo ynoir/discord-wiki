@@ -70,7 +70,8 @@ export class WikiEntryPanel {
         const messageUrlField = inputField({
             label: 'Message URL',
             value: messageUrl,
-            disabled: true
+            disabled: true,
+            copyButton: true
         })
 
         const deleteButton = button({

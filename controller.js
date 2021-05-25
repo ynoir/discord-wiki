@@ -82,7 +82,7 @@ export class Controller {
         this.model.wikiEntries.splice(this.model.wikiEntryEditIndex, 1)
         this.model.wikiEntryEditIndex = undefined
         if (this.model.wikiEntries.length > 0) {
-            this.model.wikiEntryEditIndex = 0
+            this.model.wikiEntryEditIndex = this.model.wikiEntries.length - 1
         }
         this.modelChanged()
     }
