@@ -8,22 +8,36 @@ const headers = {
 
 export class DiscordService {
 
-    async post(webhook, data) {
-        const response = await fetch(webhook + '?wait=true', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(data)
-        });
-        return await response.json()
+    post(webhook, data) {
+        return this.sendRequest(webhook, data, 'POST')
     }
 
-    async patch(webhook, messageId, data) {
-        const response = await fetch(webhook + '/messages/' + messageId + '?wait=true', {
-            method: 'PATCH',
-            headers: headers,
-            body: JSON.stringify(data)
+    patch(webhook, messageId, data) {
+        return this.sendRequest(webhook + '/messages/' + messageId, data, 'PATCH')
+    }
+
+    sendRequest(url, data, method) {
+        return new Promise((resolve) => {
+            fetch(url + '?wait=true', {
+                method: method,
+                headers: headers,
+                body: JSON.stringify(data)
+            }).then((response) => {
+                response.json().then((responseJson) => {
+                    if (!response.ok) {
+                        if (responseJson.message && responseJson.message.includes('rate limit')) {
+                            setTimeout(() => {
+                                this.sendRequest(url, data, method).then((responseJson) => resolve(responseJson))
+                            }, 2000)
+                        } else {
+                            alert('Oh no, something went wrong!\n' + JSON.stringify(response, null, 4))
+                        }
+                    } else {
+                        resolve(responseJson)        
+                    }
+                })
+            });
         })
-        return await response.json();
     }
 
 }

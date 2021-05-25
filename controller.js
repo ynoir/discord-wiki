@@ -119,58 +119,61 @@ export class Controller {
         })
     }
 
-    syncWikiEnties() {
-        const tasks = []
-        const dirtyEntries = this.model.wikiEntries.filter((wikiEntry) => wikiEntry.dirty)
-        for (let i = 0; i < dirtyEntries.length; i++) {
-            const wikiEntry = dirtyEntries[i]
-            tasks.push(new Promise((resolve) => {
-                setTimeout(() => {
-                    this.syncWikiEntry(wikiEntry).then(() => resolve())
-                }, 500 * i)
-            }))
-        }
+    queueSync(wikiEntities) {
+        return new Promise((resolve) => {
+            if (wikiEntities.length == 0) {
+                resolve()
+            } else {
+                this.syncWikiEntry(wikiEntities.shift()).then(() => {
+                    this.queueSync(wikiEntities).then(() => resolve())
+                })
+            }
+        })
+    }
 
-        return tasks.reduce((promiseChain, currentTask) => {
-            return promiseChain.then(chainResults =>
-                currentTask.then(currentResult =>
-                    [ ...chainResults, currentResult ]
-                )
-            )
-        }, Promise.resolve([])).then(() => {})
+    syncWikiEnties() {
+        return new Promise((resolve) => {
+            const dirtyEntries = this.model.wikiEntries.filter((wikiEntry) => wikiEntry.dirty)
+            this.queueSync(dirtyEntries).then(() => resolve())
+        })
     }
 
     syncWikiEntry(wikiEntry) {
-        if (wikiEntry.dirty) {
-            const indexLink = 'https://discord.com/channels/' + this.model.serverId + '/' + this.model.channelId + '/' + this.model.wikiIndexMessageId
-            const hookData = {
-                embeds: [
-                    {
-                        title: wikiEntry.title,
-                        thumbnail: { url : this.model.thumbnailUrl },
-                        image: { url : wikiEntry.imageUrl },
-                        description: wikiEntry.content,
-                        color: 5814783,
-                    },
-                    {
-                        description: '[Zurück zum Inhaltsverzeichnis](' + indexLink + ')'
-                    }
-                ]
-            }
-            if (wikiEntry.messageId) {
-                return this.discordService.patch(this.model.webhook, wikiEntry.messageId, hookData).then((response) => {
-                    wikiEntry.dirty = false
-                    this.modelChanged()
-                })
+        return new Promise((resolve) => {
+            if (wikiEntry.dirty) {
+                const indexLink = 'https://discord.com/channels/' + this.model.serverId + '/' + this.model.channelId + '/' + this.model.wikiIndexMessageId
+                const hookData = {
+                    embeds: [
+                        {
+                            title: wikiEntry.title,
+                            thumbnail: { url : this.model.thumbnailUrl },
+                            image: { url : wikiEntry.imageUrl },
+                            description: wikiEntry.content,
+                            color: 5814783,
+                        },
+                        {
+                            description: '[Zurück zum Inhaltsverzeichnis](' + indexLink + ')'
+                        }
+                    ]
+                }
+                if (wikiEntry.messageId) {
+                    this.discordService.patch(this.model.webhook, wikiEntry.messageId, hookData).then(() => {
+                        wikiEntry.dirty = false
+                        this.modelChanged()
+                        resolve()
+                    })
+                } else {
+                    this.discordService.post(this.model.webhook, hookData).then((response) => {
+                        wikiEntry.messageId = response.id
+                        wikiEntry.dirty = false
+                        this.modelChanged()
+                        resolve()
+                    })
+                }
             } else {
-                return this.discordService.post(this.model.webhook, hookData).then((response) => {
-                    wikiEntry.messageId = response.id
-                    wikiEntry.dirty = false
-                    this.modelChanged()
-                })
+                resolve()
             }
-        }
-        return Promise.resolve()
+        })
     }
 
     ensureIndex() {
