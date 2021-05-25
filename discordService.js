@@ -30,7 +30,7 @@ export class DiscordService {
                                 this.sendRequest(url, data, method).then((responseJson) => resolve(responseJson))
                             }, 2000)
                         } else {
-                            alert('Oh no, something went wrong!\n' + JSON.stringify(response, null, 4))
+                            alert('Oh no, something went wrong!\n' + JSON.stringify(responseJson, null, 4))
                         }
                     } else {
                         resolve(responseJson)        

@@ -4,6 +4,8 @@ import { DiscordService } from './discordService.js'
 import { Model } from './model.js'
 import { showOverlay, hideOverlay } from './components.js'
 
+const indexTitle = 'Inhaltsverzeichnis der Wiki-Einträge'
+
 export class Controller {
 
     constructor(topPanelContainer, wikiEntryPanelContainer) {
@@ -107,16 +109,25 @@ export class Controller {
     }
 
     sync() {
-        showOverlay({
-            text: 'Publishing...'
+        const indexDescriptions = this.buildIndexDescriptions()
+        let length = indexTitle.length
+        indexDescriptions.forEach((indexDescription) => {
+            length += indexDescription.length
         })
-        this.ensureIndex().then(() => {
-            this.syncWikiEnties().then(() => {
-                this.updateIndex().then(() => {
-                    hideOverlay()
+        if (length > 6000) {
+            alert('This Wiki is too big. Remove some entries and start a new one.')
+        } else {
+            showOverlay({
+                text: 'Publishing...'
+            })
+            this.ensureIndex().then(() => {
+                this.syncWikiEnties().then(() => {
+                    this.updateIndex().then(() => {
+                        hideOverlay()
+                    })
                 })
             })
-        })
+        }
     }
 
     queueSync(wikiEntities) {
@@ -181,7 +192,7 @@ export class Controller {
             const hookData = {
                 embeds: [
                     {
-                        title: 'Inhaltsverzeichnis der Wiki-Einträge',
+                        title: indexTitle,
                         thumbnail: { url : this.model.thumbnailUrl },
                         description: '',
                         color: 5814783
@@ -198,6 +209,27 @@ export class Controller {
     }
 
     updateIndex() {
+        const indexDescriptions = this.buildIndexDescriptions()
+        let first = true
+        const embeds = indexDescriptions.map((indexDescription) => {
+            const embed = {
+                description: indexDescription,
+                color: 5814783
+            }
+            if (first) {
+                first = false
+                embed.title = indexTitle,
+                embed.thumbnail = { url: this.model.thumbnailUrl }
+            }
+            return embed
+        })
+        const hookData = {
+            embeds: embeds
+        }
+        return this.discordService.patch(this.model.webhook, this.model.wikiIndexMessageId, hookData)
+    }
+
+    buildIndexDescriptions() {
         let indexEmdedDescriptions = []
         let indexEmdedDescription = ''
         this.model.wikiEntries.forEach((wikiEntry) => {
@@ -210,22 +242,6 @@ export class Controller {
             indexEmdedDescription += entryLink + '\n'
         });
         indexEmdedDescriptions.push(indexEmdedDescription)
-        let first = true
-        const embeds = indexEmdedDescriptions.map((indexEmdedDescription) => {
-            const embed = {
-                description: indexEmdedDescription,
-                color: 5814783
-            }
-            if (first) {
-                first = false
-                embed.title = 'Inhaltsverzeichnis der Wiki-Einträge',
-                embed.thumbnail = { url: this.model.thumbnailUrl }
-            }
-            return embed
-        })
-        const hookData = {
-            embeds: embeds
-        }
-        return this.discordService.patch(this.model.webhook, this.model.wikiIndexMessageId, hookData)
+        return indexEmdedDescriptions
     }
 }
