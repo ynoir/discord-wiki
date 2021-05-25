@@ -28,6 +28,10 @@ export const inputField = (options) => {
         inputGroup.appendChild(inputGroupButton)
     }
 
+    if (options.disabled) {
+        input.disabled = true
+    }
+
     return inputGroup
 }
 

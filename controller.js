@@ -189,21 +189,33 @@ export class Controller {
     }
 
     updateIndex() {
-        // TODO index size limit
-        const links = this.model.wikiEntries.map((wikiEntry) => {
+        let indexEmdedDescriptions = []
+        let indexEmdedDescription = ''
+        this.model.wikiEntries.forEach((wikiEntry) => {
             const messageLink = 'https://discord.com/channels/' + this.model.serverId + '/' + this.model.channelId + '/' + wikiEntry.messageId
-            return '[' + wikiEntry.title + '](' + messageLink + ')'
+            const entryLink = '[' + wikiEntry.title + '](' + messageLink + ')'
+            if (indexEmdedDescription.length + entryLink.length >= 1998) {
+                indexEmdedDescriptions.push(indexEmdedDescription)
+                indexEmdedDescription = ''
+            }
+            indexEmdedDescription += entryLink + '\n'
         });
-        const description = links.join('\n')
+        indexEmdedDescriptions.push(indexEmdedDescription)
+        let first = true
+        const embeds = indexEmdedDescriptions.map((indexEmdedDescription) => {
+            const embed = {
+                description: indexEmdedDescription,
+                color: 5814783
+            }
+            if (first) {
+                first = false
+                embed.title = 'Inhaltsverzeichnis der Wiki-Einträge',
+                embed.thumbnail = { url: this.model.thumbnailUrl }
+            }
+            return embed
+        })
         const hookData = {
-            embeds: [
-                {
-                    title: 'Inhaltsverzeichnis der Wiki-Einträge',
-                    thumbnail: { url : this.model.thumbnailUrl },
-                    description: description,
-                    color: 5814783
-                }
-            ]
+            embeds: embeds
         }
         return this.discordService.patch(this.model.webhook, this.model.wikiIndexMessageId, hookData).then((response) => {
         })

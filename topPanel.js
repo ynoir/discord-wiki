@@ -19,7 +19,7 @@ export class TopPanel {
                 this.controller.setWebhook(webhook)
             },
             button: {
-                label: 'Sync',
+                label: 'Publish',
                 action: () => this.controller.sync()
             }
         })

@@ -63,7 +63,15 @@ export class WikiEntryPanel {
             }
         })
 
-        // TODO messae link readonly
+        let messageUrl = '(not yet published)'
+        if (wikiEntry.messageId) {
+            messageUrl = 'https://discord.com/channels/' + this.model.serverId + '/' + this.model.channelId + '/' + wikiEntry.messageId
+        }
+        const messageUrlField = inputField({
+            label: 'Message URL',
+            value: messageUrl,
+            disabled: true
+        })
 
         const deleteButton = button({
             label: 'Delete',
@@ -74,6 +82,7 @@ export class WikiEntryPanel {
         this.container.appendChild(titleField)
         this.container.appendChild(contentField)
         this.container.appendChild(imageUrlField)
+        this.container.appendChild(messageUrlField)
         this.container.appendChild(deleteButton)
     }
 }
