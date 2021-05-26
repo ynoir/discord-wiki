@@ -13,13 +13,13 @@
             <div class="grid-container">
                 <h2>Discord Wiki Doc</h2>
                 <p>
-                    Discord Wiki can be used to publish embeds to Discord. The first message will be the index, followed by each wiki entry in a message.
+                    Discord Wiki can be used to publish wiki entries to Discord as embeds. The first message will be the index, followed by each wiki entry in a message.
                 </p>
 
                 <h3>User Interface</h3>
                 <p>
                     <strong>Webhook</strong><br/>
-                    Discord webhook URL configured in channel settings.
+                    Discord webhook URL configured in channel settings. The Publish button creates / updates the index, adds all new entries and updates changed ones.
                 </p>
                 <p>
                     <strong>Wiki Name</strong><br/>
@@ -43,7 +43,7 @@
                 </p>
                 <p>
                     <strong>Channel ID / Index Message ID</strong><br/>
-                    IDs of the channe and the index message. Can't be edited since the index message needs to be created by the bot belonging to the webhook.
+                    IDs of the channe and the index message. Can't be edited since the index message needs to be created by the bot belonging to the webhook, which can't be ensured.
                 </p>
                 <p>
                     <strong>Import / Export buttons</strong><br/>
@@ -76,6 +76,9 @@
 
                 <h3>Limitations</h3>
                 <ul>
+                    <li>
+                        Discord Wiki doesn't really sync with Discord. It doesn't read any data from Discord, but only adds messages and edits those messages. It assumes that no changes are made on Discord. E.g. if a message has beed deleted in Discord, publishing will lead to an error. The corresponding wiki entry has to be deleted and recreated.
+                    </li>
                     <li>
                         There is not special support for working with multiple wikis. It can be achieved by exporting the wikis to files and importing the one to be edited. To initialize a new wiki, open Discord Wiki in a private tab.
                     </li>
