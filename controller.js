@@ -187,19 +187,21 @@ export class Controller {
         return new Promise((resolve) => {
             if (wikiEntry.dirty) {
                 const indexLink = 'https://discord.com/channels/' + this.model.serverId + '/' + this.model.channelId + '/' + this.model.wikiIndexMessageId
+                const embeds = []
+                embeds.push({
+                    title: wikiEntry.title,
+                    thumbnail: { url : this.model.thumbnailUrl },
+                    image: { url : wikiEntry.imageUrl },
+                    description: wikiEntry.content,
+                    color: 5814783,
+                })
+                if (this.model.indexLinkName) {
+                    embeds.push({
+                        description: '[' + this.model.indexLinkName + '](' + indexLink + ')'
+                    })
+                }
                 const hookData = {
-                    embeds: [
-                        {
-                            title: wikiEntry.title,
-                            thumbnail: { url : this.model.thumbnailUrl },
-                            image: { url : wikiEntry.imageUrl },
-                            description: wikiEntry.content,
-                            color: 5814783,
-                        },
-                        {
-                            description: '[' + this.model.indexLinkName + '](' + indexLink + ')'
-                        }
-                    ]
+                    embeds: embeds
                 }
                 if (wikiEntry.messageId) {
                     this.discordService.patch(this.model.webhook, wikiEntry.messageId, hookData).then(() => {
