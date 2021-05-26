@@ -93,7 +93,7 @@ export class WikiEntryPanel {
             updateInputField(this.titleField, wikiEntry.title)
             updateTextarea(this.contentField, wikiEntry.content)
             updateInputField(this.imageUrlField, wikiEntry.imageUrl)
-            updateInputField(this.messageUrlField, wikiEntry.imageUrl)
+            updateInputField(this.messageUrlField, messageUrl)
         }
 
         this.container.appendChild(this.entryDivider)
