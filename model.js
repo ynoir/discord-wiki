@@ -2,9 +2,11 @@ export class Model {
 
     constructor() {
         this.wikiName = 'Wiki Of Peculiar Things'
+        this.indexTitle = 'Index'
+        this.indexLinkName = 'Back to Index'
         this.webhook = ''
         this.serverId = ''
-        this.channelId = ''
+        this.channelId = undefined
         this.thumbnailUrl = ''
         this.wikiEntries = []
         this.wikiEntryEditIndex = undefined

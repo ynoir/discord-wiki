@@ -4,7 +4,8 @@ import { DiscordService } from './discordService.js'
 import { Model } from './model.js'
 import { showOverlay, hideOverlay } from './components.js'
 
-const indexTitle = 'Inhaltsverzeichnis der Wiki-Einträge'
+// TODO testing
+// TODO write doc
 
 export class Controller {
 
@@ -12,6 +13,7 @@ export class Controller {
         this.discordService = new DiscordService()
         const storedModel = localStorage.getItem('discordWiki')
         this.model = storedModel ? JSON.parse(storedModel) : new Model()
+        this.ensureModelConsistency()
         this.topPanelContainer = topPanelContainer
         this.wikiEntryPanelContainer = wikiEntryPanelContainer
         this.topPanel = new TopPanel(this, this.model, this.topPanelContainer)
@@ -30,11 +32,24 @@ export class Controller {
         var reader = new FileReader();
         reader.onload = () => {
             this.model = JSON.parse(reader.result)
+            this.ensureModelConsistency()
             this.topPanel.model = this.model
             this.wikiEntryPanel.model = this.model
             this.modelChanged()
         }
         reader.readAsText(event.target.files[0]);
+    }
+
+    ensureModelConsistency() {
+        const newModel = new Model()
+        Object.keys(newModel).forEach((key) => {
+            if (!Object.keys(this.model).includes(key)) {
+                this.model[key] = newModel[key]
+            }
+        })
+        if (this.model.wikiEntryEditIndex > this.model.wikiEntries.length - 1) {
+            this.model.wikiEntryEditIndex = this.model.wikiEntries.length - 1
+        }
     }
 
     export() {
@@ -47,6 +62,19 @@ export class Controller {
 
     setWikiName(wikiName) {
         this.model.wikiName = wikiName
+        this.modelChanged()
+    }
+
+    setIndexTitle(indexTitle) {
+        this.model.indexTitle = indexTitle
+        this.modelChanged()
+    }
+
+    setIndexLinkName(indexLinkName) {
+        this.model.indexLinkName = indexLinkName
+        this.model.wikiEntries.forEach((wikiEntry) => {
+            wikiEntry.dirty = true
+        })
         this.modelChanged()
     }
 
@@ -116,7 +144,7 @@ export class Controller {
 
     sync() {
         const indexDescriptions = this.buildIndexDescriptions()
-        let length = indexTitle.length
+        let length = this.model.indexTitle.length
         indexDescriptions.forEach((indexDescription) => {
             length += indexDescription.length
         })
@@ -169,7 +197,7 @@ export class Controller {
                             color: 5814783,
                         },
                         {
-                            description: '[Zurück zum Inhaltsverzeichnis](' + indexLink + ')'
+                            description: '[' + this.model.indexLinkName + '](' + indexLink + ')'
                         }
                     ]
                 }
@@ -198,7 +226,7 @@ export class Controller {
             const hookData = {
                 embeds: [
                     {
-                        title: indexTitle,
+                        title: this.model.indexTitle,
                         thumbnail: { url : this.model.thumbnailUrl },
                         description: '',
                         color: 5814783
@@ -224,7 +252,7 @@ export class Controller {
             }
             if (first) {
                 first = false
-                embed.title = indexTitle,
+                embed.title = this.model.indexTitle,
                 embed.thumbnail = { url: this.model.thumbnailUrl }
             }
             return embed

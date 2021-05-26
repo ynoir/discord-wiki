@@ -1,4 +1,4 @@
-import { inputField, button, textarea, select, divider } from './components.js'
+import { inputField, updateInputField, button, textarea, updateTextarea, select, updateSelect, divider } from './components.js'
 
 export class WikiEntryPanel {
 
@@ -24,66 +24,85 @@ export class WikiEntryPanel {
             })
         }
 
-        const wikiEntrySelect = select({
-            label: 'Wiki Entries',
-            options: options,
-            addNew: () => this.controller.newWikiEntry(),
-            select: (value) => this.controller.editWikiEntry(value)
-        })
-        this.container.appendChild(wikiEntrySelect)
+        if (!this.rendered) {
+            this.wikiEntrySelect = select({
+                label: 'Wiki Entries',
+                options: options,
+                addNew: () => this.controller.newWikiEntry(),
+                select: (value) => this.controller.editWikiEntry(value)
+            })
+            this.container.appendChild(this.wikiEntrySelect)
+        } else {
+            updateSelect(this.wikiEntrySelect, options)
+            this.container.appendChild(this.wikiEntrySelect)
+        }
 
         if (this.model.wikiEntryEditIndex == undefined) {
             return
         }
 
-        const entryDivider = divider()
-
         const wikiEntry = this.model.wikiEntries[this.model.wikiEntryEditIndex]
-
-        const titleField = inputField({
-            label: 'Title',
-            value: wikiEntry.title,
-            onchange: (title) => {
-                this.controller.updateTitle(title)
-            }
-        })
-
-        const contentField = textarea({
-            value: wikiEntry.content,
-            onchange: (content) => {
-                this.controller.updateContent(content)
-            }
-        })
-
-        const imageUrlField = inputField({
-            label: 'Image URL',
-            value: wikiEntry.imageUrl,
-            onchange: (imageUrl) => {
-                this.controller.updateImageUrl(imageUrl)
-            }
-        })
+        if (!wikiEntry) {
+            return
+        }
 
         let messageUrl = '(not yet published)'
         if (wikiEntry.messageId) {
             messageUrl = 'https://discord.com/channels/' + this.model.serverId + '/' + this.model.channelId + '/' + wikiEntry.messageId
         }
-        const messageUrlField = inputField({
-            label: 'Message URL',
-            value: messageUrl,
-            disabled: true,
-            copyButton: true
-        })
 
-        const deleteButton = button({
-            label: 'Delete',
-            action: () => this.controller.deleteWikiEntry()
-        })
+        if (!this.rendered) {
+        
+            this.entryDivider = divider()
+    
+            this.titleField = inputField({
+                label: 'Title',
+                value: wikiEntry.title,
+                onchange: (title) => {
+                    this.controller.updateTitle(title)
+                }
+            })
+    
+            this.contentField = textarea({
+                value: wikiEntry.content,
+                onchange: (content) => {
+                    this.controller.updateContent(content)
+                }
+            })
+    
+            this.imageUrlField = inputField({
+                label: 'Image URL',
+                value: wikiEntry.imageUrl,
+                onchange: (imageUrl) => {
+                    this.controller.updateImageUrl(imageUrl)
+                }
+            })
+    
+            this.messageUrlField = inputField({
+                label: 'Message URL',
+                value: messageUrl,
+                disabled: true,
+                copyButton: true
+            })
+    
+            this.deleteButton = button({
+                label: 'Delete',
+                action: () => this.controller.deleteWikiEntry()
+            })
+        } else {
+            updateInputField(this.titleField, wikiEntry.title)
+            updateTextarea(this.contentField, wikiEntry.content)
+            updateInputField(this.imageUrlField, wikiEntry.imageUrl)
+            updateInputField(this.messageUrlField, wikiEntry.imageUrl)
+        }
 
-        this.container.appendChild(entryDivider)
-        this.container.appendChild(titleField)
-        this.container.appendChild(contentField)
-        this.container.appendChild(imageUrlField)
-        this.container.appendChild(messageUrlField)
-        this.container.appendChild(deleteButton)
+        this.container.appendChild(this.entryDivider)
+        this.container.appendChild(this.titleField)
+        this.container.appendChild(this.contentField)
+        this.container.appendChild(this.imageUrlField)
+        this.container.appendChild(this.messageUrlField)
+        this.container.appendChild(this.deleteButton)
+
+        this.rendered = true
     }
 }

@@ -51,6 +51,11 @@ export const inputField = (options) => {
     return inputGroup
 }
 
+export const updateInputField = (inputField, value) => {
+    const field = inputField.getElementsByClassName('input-group-field')[0]
+    field.value = value 
+}
+
 export const button = (options) => {
     const button = document.createElement('input')
     button.type = 'submit'
@@ -85,6 +90,18 @@ export const importExportButtons = (options) => {
     return div
 }
 
+const appendSelectOptions = (select, options) => {
+    options.forEach(op => {
+        const option = document.createElement('option')
+        option.innerText = op.label
+        option.value = op.value
+        if (op.selected) {
+            option.selected = true
+        }
+        select.appendChild(option)
+    })
+}
+
 export const select = (options) => {
     const span = document.createElement('span')
     span.classList.add('input-group-label')
@@ -100,17 +117,8 @@ export const select = (options) => {
     })
     inputGroupButton.appendChild(newButton)
 
-    options.options.forEach(op => {
-        const option = document.createElement('option')
-        option.innerText = op.label
-        option.value = op.value
-        if (op.selected) {
-            option.selected = true
-        }
-        select.appendChild(option)
-    })
+    appendSelectOptions(select, options.options)
     select.onchange = (event) => options.select(event.target.value)
-
     span.innerText = options.label
 
     inputGroup.appendChild(span)
@@ -120,6 +128,12 @@ export const select = (options) => {
     return inputGroup
 }
 
+export const updateSelect = (select, options) => {
+    const field = select.getElementsByClassName('input-group-field')[0]
+    field.innerHTML = ''
+    appendSelectOptions(field, options)
+}
+
 export const textarea = (options) => {
     const textarea = document.createElement('textarea')
     textarea.setAttribute('maxlength', 2000)
@@ -127,6 +141,10 @@ export const textarea = (options) => {
     textarea.value = options.value
     textarea.onchange = (event) => options.onchange(event.target.value)
     return textarea
+}
+
+export const updateTextarea = (textarea, value) => {
+    textarea.value = value
 }
 
 export const divider = () => {
