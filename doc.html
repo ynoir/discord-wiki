@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>DiscordWiki</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/css/foundation.min.css" integrity="sha256-ogmFxjqiTMnZhxCqVmcqTvjfe1Y/ec4WaRj/aQPvn+I=" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="discord-wiki.css" />
+        <script type="module" src="app.js"></script>
+    </head>
+    <body>
+
+        <form>
+            <div class="grid-container">
+                <h2>Discord Wiki Doc</h2>
+                <p>
+                    Discord Wiki can be used to publish embeds to Discord. The first message will be the index, followed by each wiki entry in a message.
+                </p>
+
+                <h3>User Interface</h3>
+                <p>
+                    <strong>Webhook</strong><br/>
+                    Discord webhook URL configured in channel settings.
+                </p>
+                <p>
+                    <strong>Wiki Name</strong><br/>
+                    Will be used as file name when exporting the wiki.
+                </p>
+                <p>
+                    <strong>Index Title</strong><br/>
+                    Title used in the index message.
+                </p>
+                <p>
+                    <strong>Index Link Name</strong><br/>
+                    If set, an embed will be added to each wiki entry linking back to the index message. When changed, all messages will be updated.
+                </p>
+                <p>
+                    <strong>Thumbnail URL</strong><br/>
+                    Thumbnail used for all messages. When changed, all messages will be updated.
+                </p>
+                <p>
+                    <strong>Server ID</strong><br/>
+                    First number in a message URL. Has to be set manually since the webhook doesn't return it.
+                </p>
+                <p>
+                    <strong>Channel ID / Index Message ID</strong><br/>
+                    IDs of the channe and the index message. Can't be edited since the index message needs to be created by the bot belonging to the webhook.
+                </p>
+                <p>
+                    <strong>Import / Export buttons</strong><br/>
+                    Used to store the wiki settings and content as a file. This is necessary when working with multiple wikis and strongly recommended when working with one. For convenience the data is also stored in the browser, so it's not always necessary to import. But the data should always be exported.
+                </p>
+                <p>
+                    <strong>Wiki Entries</strong><br/>
+                    List of wiki entries and button to create a new one.
+                </p>
+                <p>
+                    <strong>Title</strong><br/>
+                    Title of the selected wiki entry.
+                </p>
+                <p>
+                    <strong>Text area below Title</strong><br/>
+                    Content of the selected wiki entry.
+                </p>
+                <p>
+                    <strong>Image URL</strong><br/>
+                    If set, the image will be added to the selected wiki entry.
+                </p>
+                <p>
+                    <strong>Message URL</strong><br/>
+                    If the message is already published, the link can be copied to the clipboard to be pasted as a link in another wiki entry.
+                </p>
+                <p>
+                    <strong>Delete</strong><br/>
+                    Deletes the selected wiki entry. If it is already published, the Discord message has to be deleted manually.
+                </p>
+
+                <h3>Limitations</h3>
+                <ul>
+                    <li>
+                        There is not special support for working with multiple wikis. It can be achieved by exporting the wikis to files and importing the one to be edited. To initialize a new wiki, open Discord Wiki in a private tab.
+                    </li>
+                    <li>
+                        One Discord message can contain up to 6000 characters. The index message will reach that (due to the lengthy message links) after about 50-60 entries. Discord Wiki will show a warning and refuse to publish in that case. A new wiki has to be started, which can use the same webhook to be created below the previous wiki.
+                    </li>
+                    <li>
+                        One Discord embed can contain up to 2000 characters, so the wiki entries are limited accordingly.
+                    </li>
+                </ul>
+
+            </div>
+        </form>
+
+    </body>
+</html>
