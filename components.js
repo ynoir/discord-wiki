@@ -82,11 +82,17 @@ export const importExportButtons = (options) => {
         label: options.exportLabel,
         action: options.exportAction
     })
+    const clearButton = button({
+        label: options.clearLabel,
+        action: options.clearAction
+    })
     exportButton.style.cssText = 'margin-left: 10px'
+    clearButton.style.cssText = 'margin-left: 10px'
     label.appendChild(input)
     div.appendChild(label)
     div.appendChild(importButton)
     div.appendChild(exportButton)
+    div.appendChild(clearButton)
     return div
 }
 

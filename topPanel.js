@@ -76,7 +76,9 @@ export class TopPanel {
                 importLabel: 'Import',
                 importAction: (value) => this.controller.import(value),
                 exportLabel: 'Export',
-                exportAction: () => this.controller.export()
+                exportAction: () => this.controller.export(),
+                clearLabel: 'Clear',
+                clearAction: () => this.controller.clear()
             })
         } else {
             updateInputField(this.wikiNameField, this.model.wikiName)
@@ -85,6 +87,7 @@ export class TopPanel {
             updateInputField(this.webhookField, this.model.webhook)
             updateInputField(this.serverIdField, this.model.serverId)
             updateInputField(this.thumbnailUrlField, this.model.thumbnailUrl)
+            updateInputField(this.indexMessageField, this.model.channelId + ' / ' + this.model.wikiIndexMessageId)
         }
 
         this.container.appendChild(this.webhookField)

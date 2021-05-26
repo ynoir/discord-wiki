@@ -50,6 +50,10 @@
                     Used to store the wiki settings and content as a file. This is necessary when working with multiple wikis and strongly recommended when working with one. For convenience the data is also stored in the browser, so it's not always necessary to import. But the data should always be exported.
                 </p>
                 <p>
+                    <strong>Clear button</strong><br/>
+                    Deletes the whole wiki. Can be used to start a new one. Make sure to export the current wiki before, in case you are still using it.
+                </p>
+                <p>
                     <strong>Wiki Entries</strong><br/>
                     List of wiki entries and button to create a new one.
                 </p>
@@ -80,7 +84,7 @@
                         Discord Wiki doesn't really sync with Discord. It doesn't read any data from Discord, but only adds messages and edits those messages. It assumes that no changes are made on Discord. E.g. if a message has beed deleted in Discord, publishing will lead to an error. The corresponding wiki entry has to be deleted and recreated.
                     </li>
                     <li>
-                        There is not special support for working with multiple wikis. It can be achieved by exporting the wikis to files and importing the one to be edited. To initialize a new wiki, open Discord Wiki in a private tab.
+                        There is not special support for working with multiple wikis. It can be achieved by exporting the wikis to files and importing the one to be edited. To initialize a new wiki, clear the current one after exporting it.
                     </li>
                     <li>
                         One Discord message can contain up to 6000 characters. The index message will reach that (due to the lengthy message links) after about 50-60 entries. Discord Wiki will show a warning and refuse to publish in that case. A new wiki has to be started, which can use the same webhook to be created below the previous wiki.

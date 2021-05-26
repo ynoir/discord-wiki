@@ -60,6 +60,16 @@ export class Controller {
         hiddenElement.click()
     }
 
+    clear() {
+        const proceed = confirm("This will delete the whole wiki. Make sure you have exported it, if you still need it. Proceed?")
+        if (proceed) {
+            this.model = new Model()
+            this.topPanel.model = this.model
+            this.wikiEntryPanel.model = this.model
+            this.modelChanged()
+        }
+    }
+
     setWikiName(wikiName) {
         this.model.wikiName = wikiName
         this.modelChanged()
@@ -143,6 +153,10 @@ export class Controller {
     }
 
     sync() {
+        if (!this.model.serverId) {
+            alert('Enter the Server ID before publishing.')
+            return
+        }
         const indexDescriptions = this.buildIndexDescriptions()
         let length = this.model.indexTitle.length
         indexDescriptions.forEach((indexDescription) => {
