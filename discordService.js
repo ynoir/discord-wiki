@@ -1,3 +1,5 @@
+import { hideOverlay } from './components.js'
+
 const headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -30,7 +32,12 @@ export class DiscordService {
                                 this.sendRequest(url, data, method).then((responseJson) => resolve(responseJson))
                             }, 2000)
                         } else {
-                            alert('Oh no, something went wrong!\n' + JSON.stringify(responseJson, null, 4))
+                            hideOverlay()
+                            alert('Something went wrong while publishing following data:\n'
+                                + JSON.stringify(data, null, 4)
+                                + '\nThe response was:\n'
+                                + JSON.stringify(responseJson, null, 4)
+                                + '\nTry to fix the issue, and publish again.')
                         }
                     } else {
                         resolve(responseJson)        

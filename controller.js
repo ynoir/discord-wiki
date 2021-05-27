@@ -4,9 +4,6 @@ import { DiscordService } from './discordService.js'
 import { Model } from './model.js'
 import { showOverlay, hideOverlay } from './components.js'
 
-// TODO testing
-// TODO write doc
-
 export class Controller {
 
     constructor(topPanelContainer, wikiEntryPanelContainer) {
